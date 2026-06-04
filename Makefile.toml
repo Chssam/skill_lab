@@ -1,0 +1,42 @@
+# cargo-make
+# cargo install --force cargo-make
+# Link: https://github.com/sagiegurari/cargo-make
+
+[env]
+CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
+
+[config]
+default_to_workspace = false
+
+
+# Debug runner
+[tasks.web]
+command = "dx"
+args = ["serve", "--platform", "web"]
+
+# Release runner
+[tasks.web_release]
+command = "dx"
+args = ["serve", "--release", "--platform", "web"]
+
+# Build release exe
+[tasks.build_release]
+command = "dx"
+args = ["bundle", "--release", "--out-dir", "docs"]
+
+
+# Backup Commands
+[tasks.clean_backup]
+script = "rmdir /s /q backups"
+
+[tasks.new_backup]
+script = "mkdir backups"
+
+[tasks.backup_cargo]
+script = "copy Cargo.toml backups\\"
+
+[tasks.backup_book_ley]
+script = "xcopy src backups\\src\\ /s /q"
+
+[tasks.backup]
+dependencies = ["new_backup", "backup_cargo", "backup_book_ley"]
