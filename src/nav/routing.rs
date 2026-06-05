@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use dioxus_icons::lucide::{CircleUserRound, ListCollapse, Moon, Sun};
+use dioxus_icons::lucide::{ListCollapse, Moon, Sun};
 use dioxus_motion::prelude::*;
 
 use crate::{FAVICON, SVG_ICON_SIZE, Theme, components::*, nav::*};
@@ -16,6 +16,11 @@ pub enum Route {
         #[transition(Fade)]
         ProfileView { id: u32 },
         
+        #[route("/edit_profile")]
+        #[transition(Fade)]
+        EditProfile {},
+        
+
         #[nest("/skill_lab")]
 
             #[route("")]
@@ -56,7 +61,6 @@ const COLLAPE_WHEN: u16 = 800;
 #[component]
 fn NavBar() -> Element {
     let mut nav_width = use_signal(|| 500u16);
-    let mut side_bar_activate = use_signal(|| false);
     let mut theme = use_context::<Signal<Theme>>();
 
     let toggle_theme = move |_| {
@@ -68,11 +72,6 @@ fn NavBar() -> Element {
     };
 
     rsx! {
-
-        if side_bar_activate() && nav_width() <= COLLAPE_WHEN {
-            div { id: "nav_side_bar", class: "navbar", Nav_Component {} }
-        }
-
         div {
             id: "navbar",
             class: "navbar",
@@ -162,7 +161,6 @@ fn Left_Panel(nav_width: Signal<u16>) -> Element {
             "data-side": SheetSide::Left.as_str(),
             SheetHeader {
                 SheetTitle { "Skill Lab" }
-                // SheetDescription { "Hi, this is Side panel." }
             }
 
             div {
@@ -171,6 +169,7 @@ fn Left_Panel(nav_width: Signal<u16>) -> Element {
                 grid_auto_rows: "min-content",
                 gap: "1.5rem",
                 padding: "0 1rem",
+                onclick: move |_| open.set(false),
 
                 Nav_Component {}
             }

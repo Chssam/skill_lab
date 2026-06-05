@@ -4,15 +4,6 @@ use dioxus::prelude::*;
 use crate::{data::*, nav::Route};
 
 #[component]
-pub fn Skill_Lab() -> Element {
-    let the_world = use_context::<Signal<TheWorld>>();
-
-    rsx! {
-        h1 { "Skill Lab page Damn" }
-    }
-}
-
-#[component]
 pub fn SkillView(id: u32) -> Element {
     let the_world = use_context::<Signal<TheWorld>>();
 
@@ -23,12 +14,12 @@ pub fn SkillView(id: u32) -> Element {
         let op_q_user = world.try_query_filtered::<(&Name, &UserID), With<User>>();
 
         let v = world
-            .try_query_filtered::<(&Name, &SkillID, &SkillCreatedBy, &Description), With<SkillMark>>()
+            .try_query_filtered::<(&Name, &SkillID, &SkillCreatedBy, &Description, &SkillImage), With<SkillMark>>()
             .map(|mut q| {
-                q.iter(&world).find_map(|(name, q_id, op_skill_create, description)| {
+                q.iter(&world).find_map(|(name, q_id, op_skill_create, description, img)| {
                     q_id.0
                         .eq(&id)
-                        .then(|| (name.to_string(), q_id.0, op_skill_create.clone(), description.0.clone()))
+                        .then(|| (name.to_string(), q_id.0, op_skill_create.clone(), description.0.clone(), img.clone()))
                 })
             })
             .flatten();
@@ -44,26 +35,68 @@ pub fn SkillView(id: u32) -> Element {
                 })
                 .unwrap_or_default();
 
-            (v_1.0, v_1.1, ye, v_1.3)
+            (v_1.0, v_1.1, ye, v_1.3, v_1.4)
         });
 
         out
     });
 
     rsx! {
-        if let Some((skill_name, skill_id, created_by, description)) = me_name() {
-            p { "Name: {skill_name}" }
-            p { "User ID: {skill_id}" }
-            p { "Description:" }
-            p { "{description}" }
-            p { "Skill by:" }
-            if let Some((name, id)) = created_by {
+        div { class: "center", flex_direction: "column",
+
+            if let Some((skill_name, skill_id, created_by, description, img)) = me_name() {
                 div {
-                    Link { to: Route::ProfileView { id: id }, "{name}" }
+                    class: "contained",
+                    display: "flex",
+                    flex_grow: 1,
+                    flex_shrink: 0,
+                    max_width: "100vh",
+                    flex_wrap: "wrap",
+                    flex_direction: "row",
+
+                    div { margin_right: "1rem",
+
+                        p { "Name: {skill_name} ({skill_id})" }
+                        if let Some((name, id)) = created_by {
+                            div {
+                                Link { to: Route::ProfileView { id: id }, "Created by: {name}" }
+                            }
+                        }
+                        p { "Description:" }
+                        p { word_break: "break-word", "{description}" }
+
+                    }
+                    img {
+                        class: "active",
+                        border_radius: "1rem",
+                        max_width: "300px",
+                        src: img.0,
+                    }
+                }
+
+                div {
+                    class: "center",
+                    display: "flex",
+                    flex_wrap: "wrap",
+                    flex_direction: "row",
+
+                    div { class: "contained",
+                        h1 { "Stats:" }
+                        p { "Attended by: 0" }
+                        p { "Reviewed by: 0" }
+                    }
+
+                    div { class: "contained",
+                        h1 { "Reviewed by:" }
+                    }
+                }
+            } else {
+                div { class: "contained",
+                    h1 { "Unable to find the skill." }
                 }
             }
-        } else {
-            h1 { "Unable to find the skill." }
+
         }
+
     }
 }

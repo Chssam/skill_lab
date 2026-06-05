@@ -1,7 +1,6 @@
 use bevy_derive::*;
 use bevy_ecs::{entity::EntityHashMap, prelude::*};
 use bevy_scene::serde::SceneDeserializer;
-use dioxus::logger::tracing::info;
 use serde::de::DeserializeSeed as _;
 use web_time::{Instant, SystemTime, UNIX_EPOCH};
 

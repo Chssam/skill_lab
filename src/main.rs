@@ -48,7 +48,7 @@ fn App() -> Element {
     });
     use_context_provider(move || tween);
 
-    use_context_provider(|| Signal::new(FilterState::default()));
+    use_context_provider(|| Signal::new(FilterState::new()));
 
     theme_ready();
     world_ready();

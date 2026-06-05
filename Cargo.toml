@@ -56,19 +56,16 @@ web-sys = { version = "0.3.99", features = [
     "HtmlElement",
     "HtmlDocument",
     "HtmlImageElement",
-    "IdbFactory",
     "Window",
     "Element",
     "Document",
     "DomRect",
 ] }
-regex = "1.11.3"
 tokio = "1.48"
 getrandom = { version = "0.4.2", features = ["wasm_js"] }
 web-time = "1.1.0"
 async-std = "1.13.2"
 
-chrono = "0.4.44"
 easer = "0.3"
 strum = { version = "0.28", features = ["derive"] }
 convert_case = "0.11"

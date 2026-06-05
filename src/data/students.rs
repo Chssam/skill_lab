@@ -31,7 +31,7 @@ impl UserID {
 }
 
 #[derive(Reflect, Component)]
-#[require(TimeSpend, Description, SkillCreated, ReviewCreated)]
+#[require(TimeSpend, Description, SkillCreated, ReviewCreated, UserPicture)]
 #[reflect(Component)]
 pub struct User;
 
@@ -80,7 +80,7 @@ pub struct SessionDuration(pub Timer);
 
 impl Default for SessionDuration {
     fn default() -> Self {
-        Self(Timer::new(Duration::from_mins(10), TimerMode::Once))
+        Self(Timer::new(Duration::from_mins(15), TimerMode::Once))
     }
 }
 
@@ -100,7 +100,6 @@ impl Default for SessionDuration {
 #[reflect(Component)]
 pub struct Age(pub u8);
 
-#[derive(Reflect, Component, Clone, Debug, PartialEq, Deref)]
-#[component(immutable)]
+#[derive(Reflect, Component, Default, Clone, Debug, PartialEq, Deref)]
 #[reflect(Component)]
 pub struct UserPicture(pub String);

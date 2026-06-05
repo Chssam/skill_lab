@@ -6,9 +6,8 @@ use convert_case::ccase;
 use dioxus::prelude::*;
 use dioxus_primitives::ContentSide;
 use strum::IntoEnumIterator;
-use web_sys::wasm_bindgen::JsCast;
 
-use crate::{components::*, data::*, nav::Route};
+use crate::{components::*, data::*};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Item {
@@ -23,25 +22,21 @@ pub struct Item {
     pub description: String,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct FilterState {
-    show: u8,
     sort_by: SortBy,
     item_tags: Vec<Skill>,
     creator_name: String,
     skill_name: String,
+    show: u8,
     page: usize,
 }
 
-impl Default for FilterState {
-    fn default() -> Self {
+impl FilterState {
+    pub fn new() -> Self {
         Self {
             show: 15,
-            sort_by: Default::default(),
-            item_tags: Default::default(),
-            creator_name: Default::default(),
-            skill_name: Default::default(),
-            page: Default::default(),
+            ..Default::default()
         }
     }
 }
@@ -96,7 +91,7 @@ pub fn BrowseSkill() -> Element {
             margin_bottom: "1rem",
             max_width: "400px",
             p { font_size: "0.8rem",
-                "Due to technical issues, you need to type at the url to find user profile and skill. Example:"
+                "Due to technical issues, you need to manually type at the url to find user profile and skill. Example:"
             }
 
             p { font_size: "0.8rem", "'Write program (2)' is '/skill_lab/2'" }

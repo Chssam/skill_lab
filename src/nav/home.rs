@@ -1,5 +1,3 @@
-use std::time::Duration;
-
 use dioxus::prelude::*;
 
 use crate::data::TheWorld;
@@ -27,18 +25,17 @@ fn Total_Stat() -> Element {
         let total_skill = world.total_skill();
         let total_review = world.total_review();
 
-        let total_time_dt =
-            chrono::TimeDelta::from_std(Duration::from_secs_f32(total_time)).unwrap();
+        let total_time_dt = time::Duration::saturating_seconds_f32(total_time);
 
         let texted = [
             format!("User: {}", total_user),
             format!("Online: {}", total_online_user),
             format!(
                 "Time: {}D {}h {}m {}s",
-                total_time_dt.num_days(),
-                total_time_dt.num_hours() % 24,
-                total_time_dt.num_minutes() % 60,
-                total_time_dt.num_seconds() % 60
+                total_time_dt.whole_days(),
+                total_time_dt.whole_hours() % 24,
+                total_time_dt.whole_minutes() % 60,
+                total_time_dt.whole_seconds() % 60
             ),
             format!("Skill: {}", total_skill),
             format!("Review: {}", total_review),
@@ -68,15 +65,15 @@ fn Average_Stat() -> Element {
         let avg_skill = world.avg_skill();
         let avg_review = world.avg_review();
 
-        let total_time_dt = chrono::TimeDelta::from_std(Duration::from_secs_f32(avg_time)).unwrap();
+        let total_time_dt = time::Duration::saturating_seconds_f32(avg_time);
 
         let texted = [
             format!(
                 "Time: {}D {}h {}m {}s",
-                total_time_dt.num_days(),
-                total_time_dt.num_hours() % 24,
-                total_time_dt.num_minutes() % 60,
-                total_time_dt.num_seconds() % 60
+                total_time_dt.whole_days(),
+                total_time_dt.whole_hours() % 24,
+                total_time_dt.whole_minutes() % 60,
+                total_time_dt.whole_seconds() % 60
             ),
             format!("Skill: {:.2}", avg_skill),
             format!("Review: {:.2}", avg_review),

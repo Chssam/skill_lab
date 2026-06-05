@@ -137,6 +137,7 @@ pub fn CreateSkill() -> Element {
                     Textarea {
                         id: "skill_description",
                         variant: TextareaVariant::Default,
+                        height: "160px",
                         placeholder: "Enter your description",
                         value: description,
                         oninput: move |e: FormEvent| description.set(e.value()),

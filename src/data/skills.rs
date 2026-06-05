@@ -22,7 +22,7 @@ pub struct SkillCreated(#[entities] Vec<Entity>);
 #[reflect(Component)]
 pub struct SkillCreatedBy(#[entities] pub Entity);
 
-#[derive(Reflect, Component, Default, Clone, Deref, DerefMut)]
+#[derive(Reflect, Component, Default, Clone, PartialEq, Deref, DerefMut)]
 #[reflect(Component)]
 pub struct SkillImage(pub String);
 

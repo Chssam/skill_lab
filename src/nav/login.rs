@@ -95,7 +95,12 @@ pub fn Login() -> Element {
 
     let login = move |_| {
         let mut r_name = name.write();
-        let mut r_password = password.write();
+        let mut r_password: WriteLock<
+            '_,
+            String,
+            UnsyncStorage,
+            SignalSubscriberDrop<String, UnsyncStorage>,
+        > = password.write();
         let mut world = the_world.write();
         let mut q_user = world.query::<(Entity, &LoginName, &Password)>();
         let find_it = q_user
@@ -182,7 +187,7 @@ pub fn Login() -> Element {
             on_open_change: move |v| open.set(v),
             "data-side": SheetSide::Right.as_str(),
             SheetHeader {
-                SheetTitle { "Settings" }
+                SheetTitle { "Accounts" }
                 SheetDescription { "Hi, this is Side panel." }
             }
 
@@ -196,7 +201,16 @@ pub fn Login() -> Element {
                 if let Some((user_name, id)) = current_user() {
                     div { display: "grid", gap: "0.75rem",
                         Label { html_for: "greet", "Hello {user_name}" }
-                        Link { to: Route::ProfileView { id: id }, "Profile" }
+                        Link {
+                            to: Route::ProfileView { id: id },
+                            onclick: move |_| open.set(false),
+                            "Profile"
+                        }
+                        Link {
+                            to: Route::EditProfile {},
+                            onclick: move |_| open.set(false),
+                            "Edit Profile"
+                        }
                     }
                 } else {
                     div { display: "grid", gap: "0.75rem",

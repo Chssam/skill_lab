@@ -13,7 +13,7 @@ pub struct ReviewMark;
 #[reflect(Component)]
 pub struct ReviewOf(#[entities] pub Entity);
 
-#[derive(Reflect, Component, Default, Clone, Deref, MapEntities)]
+#[derive(Reflect, Component, Default, Clone, PartialEq, Deref, MapEntities)]
 #[relationship_target(relationship = ReviewOf)]
 #[reflect(Component)]
 pub struct ReviewCreated(#[entities] Vec<Entity>);
