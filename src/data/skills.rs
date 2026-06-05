@@ -5,10 +5,10 @@ use bevy_ecs::{entity::MapEntities, prelude::*};
 use bevy_reflect::prelude::*;
 use strum::{AsRefStr, Display, EnumCount, EnumIter};
 
-use crate::data::SkillReviewFrom;
+use crate::data::{Description, SkillReviewFrom};
 
 #[derive(Reflect, Component, Clone)]
-#[require(SkillImage, SkillTag, SkillReviewFrom)]
+#[require(Description, SkillImage, SkillTag, SkillReviewFrom)]
 #[reflect(Component)]
 pub struct SkillMark;
 
@@ -17,7 +17,7 @@ pub struct SkillMark;
 #[reflect(Component)]
 pub struct SkillCreated(#[entities] Vec<Entity>);
 
-#[derive(Reflect, Component, Debug, Deref, MapEntities)]
+#[derive(Reflect, Component, Clone, Debug, Deref, MapEntities)]
 #[relationship(relationship_target = SkillCreated)]
 #[reflect(Component)]
 pub struct SkillCreatedBy(#[entities] pub Entity);

@@ -16,19 +16,21 @@ pub enum Route {
         #[transition(Fade)]
         ProfileView { id: u32 },
         
-        
-            #[route("/skill_lab")]
+        #[nest("/skill_lab")]
+
+            #[route("")]
             #[transition(Fade)]
             BrowseSkill {},
 
-            #[route("/skill_lab/create_skill")]
+            #[route("/create_skill")]
             #[transition(Fade)]
             CreateSkill {},
             
-            #[route("/skill_lab/:id")]
+            #[route("/:id")]
             #[transition(Fade)]
             SkillView { id: u32 },
 
+        #[end_nest]
 
         #[route("/about")]
         #[transition(Fade)]

@@ -1,4 +1,4 @@
-use crate::data::wrap_window;
+use crate::data::{document, wrap_window};
 use bevy_derive::*;
 use bevy_math::{IRect, IVec2, ivec2};
 use dioxus::prelude::*;
@@ -21,11 +21,19 @@ pub type UIPos = IVec2;
 const PEEK_POS: IVec2 = ivec2(40, 0);
 const PEEK_SCALE: i32 = 6;
 
+#[derive(Debug, Clone, Default)]
+enum BackForward {
+    #[default]
+    BackTop,
+    Previous(i32),
+}
+
 #[component]
 pub fn Playful() -> Element {
     let cur_pos = use_context::<Signal<CursorPos>>();
     let mut scale = use_motion(6f32);
     let mut peek_rect = use_signal(|| IRect::from_corners(PEEK_POS, PEEK_POS));
+    let mut back_forward = use_signal(BackForward::default);
 
     let hover = move |_| {
         scale.animate_to(
@@ -39,6 +47,20 @@ pub fn Playful() -> Element {
             6.0,
             AnimationConfig::new(AnimationMode::Spring(Spring::default())),
         );
+    };
+
+    let to_top = move |_| {
+        let doc_element = document().document_element().unwrap();
+        match back_forward() {
+            BackForward::BackTop => {
+                back_forward.set(BackForward::Previous(doc_element.scroll_top()));
+                doc_element.set_scroll_top(0);
+            }
+            BackForward::Previous(prev) => {
+                back_forward.set(BackForward::BackTop);
+                doc_element.set_scroll_top(prev);
+            }
+        };
     };
 
     rsx! {
@@ -98,6 +120,7 @@ pub fn Playful() -> Element {
                 },
                 onmouseenter: hover,
                 onmouseleave: unhover,
+                onclick: to_top,
             }
         }
 

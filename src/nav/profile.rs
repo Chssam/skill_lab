@@ -1,10 +1,7 @@
 use bevy_ecs::prelude::*;
 use dioxus::prelude::*;
 
-use crate::{
-    data::{SkillCreated, SkillID, SkillMark, TheWorld, User, UserID},
-    nav::Route,
-};
+use crate::{data::*, nav::Route};
 
 #[component]
 pub fn ProfileView(id: u32) -> Element {
@@ -17,13 +14,19 @@ pub fn ProfileView(id: u32) -> Element {
         let op_q_skill = world.try_query_filtered::<(&Name, &SkillID), With<SkillMark>>();
 
         let v = world
-            .try_query_filtered::<(&Name, &UserID, &SkillCreated), With<User>>()
+            .try_query_filtered::<(&Name, &UserID, &SkillCreated, &Description), With<User>>()
             .map(|mut q| {
-                q.iter(&world).find_map(|(name, q_id, op_skill_create)| {
-                    q_id.0
-                        .eq(&id)
-                        .then(|| (name.to_string(), q_id.0, op_skill_create.clone()))
-                })
+                q.iter(&world)
+                    .find_map(|(name, q_id, op_skill_create, description)| {
+                        q_id.0.eq(&id).then(|| {
+                            (
+                                name.to_string(),
+                                q_id.0,
+                                op_skill_create.clone(),
+                                description.0.clone(),
+                            )
+                        })
+                    })
             })
             .flatten();
 
@@ -41,7 +44,7 @@ pub fn ProfileView(id: u32) -> Element {
                 })
                 .unwrap_or_default();
 
-            (v_1.0, v_1.1, ye)
+            (v_1.0, v_1.1, ye, v_1.3)
         });
 
         out
@@ -54,10 +57,17 @@ pub fn ProfileView(id: u32) -> Element {
     }
 
     rsx! {
-        if let Some((user_name, user_id, skill_created)) = me_name() {
+        if let Some((user_name, user_id, skill_created, description)) = me_name() {
             p { "Name: {user_name}" }
             p { "User ID: {user_id}" }
-            p { "Skill created: {skill_created:?}" }
+            p { "Description:" }
+            p { "{description}" }
+            p { "Skill created:" }
+            for (name, id) in skill_created {
+                div {
+                    Link { to: Route::SkillView { id: id }, "{name}" }
+                }
+            }
         } else {
             h1 { "Unable to find the user." }
         }

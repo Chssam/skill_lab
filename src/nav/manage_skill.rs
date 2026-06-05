@@ -1,13 +1,19 @@
 use std::collections::HashSet;
 
-use crate::{components::*, data::*};
+use crate::{
+    components::{
+        textarea::{Textarea, TextareaVariant},
+        *,
+    },
+    data::*,
+};
 use bevy_ecs::prelude::*;
 use convert_case::ccase;
 use dioxus::prelude::*;
 use strum::IntoEnumIterator as _;
 
 use crate::{
-    components::{Button, Input, Select, SelectMulti},
+    components::{Button, Input, SelectMulti},
     data::{CurrentUser, Skill, SkillCreatedBy, SkillMark, SkillTag, TheWorld},
 };
 
@@ -52,6 +58,7 @@ pub fn CreateSkill() -> Element {
     let mut name = use_signal(String::new);
     let mut img_link = use_signal(String::new);
     let mut set_know = use_context_provider(|| Signal::new(SetKnow::default()));
+    let mut description = use_signal(String::new);
 
     if !the_world.read().has_current_user() {
         return rsx! {
@@ -89,6 +96,8 @@ pub fn CreateSkill() -> Element {
             SkillMark,
             SkillTag(hash),
             skill_name,
+            Description(description.take()),
+            SkillImage(img_link.take()),
             SkillCreatedBy(creator),
         ));
         world.flush();
@@ -98,20 +107,49 @@ pub fn CreateSkill() -> Element {
     };
 
     rsx! {
-        Tagging {}
-        Input {
-            oninput: move |e: FormEvent| name.set(e.value()),
-            placeholder: "Enter title for the skill name",
-            value: name,
-        }
 
-        Input {
-            oninput: move |e: FormEvent| img_link.set(e.value()),
-            placeholder: "Enter image link for the skill banner",
-            value: img_link,
-        }
+        div { class: "center",
 
-        Button { onclick: create_skill, "Create" }
+            div { id: "skill_zone", flex_direction: "column",
+                h1 { "Create Skill" }
+
+                div {
+                    Label { html_for: "skill_name", "Skill title" }
+                    Input {
+                        oninput: move |e: FormEvent| name.set(e.value()),
+                        placeholder: "Title",
+                        value: name,
+                    }
+                }
+
+                div {
+                    Label { html_for: "skill_banner", "Banner (Image Link)" }
+                    Input {
+                        oninput: move |e: FormEvent| img_link.set(e.value()),
+                        placeholder: "Image link",
+                        value: img_link,
+                    }
+                }
+
+                div {
+
+                    Label { html_for: "skill_description", "Description" }
+                    Textarea {
+                        id: "skill_description",
+                        variant: TextareaVariant::Default,
+                        placeholder: "Enter your description",
+                        value: description,
+                        oninput: move |e: FormEvent| description.set(e.value()),
+                    }
+                }
+
+                Tagging {}
+
+                Button { onclick: create_skill, "Create" }
+
+            }
+
+        }
 
     }
 }
@@ -121,31 +159,28 @@ fn Tagging() -> Element {
     let mut set_know = use_context::<Signal<SetKnow>>();
 
     let items = Skill::iter().enumerate().map(|(i, it)| {
-        let cased = ccase!(title, it.as_ref());
+        let cased = ccase!(sentence, it.as_ref());
         rsx! {
             SelectOption::<Skill> { index: i, value: it, text_value: "{it}", "{it.emoji()} {cased}" }
         }
     });
 
     rsx! {
-        p { margin_top: "1rem", "Skill Tags (Multi)" }
-        SelectMulti::<Skill> {
-            default_values: vec![],
-            width: "16rem",
-            on_values_change: move |event: Vec<Skill>| {
-                set_know.write().tag = event.clone();
-            },
-            SelectGroup { {items} }
+
+        div {
+
+            Label { html_for: "skill_tagging", "Skill Tags (Multi)" }
+            SelectMulti::<Skill> {
+                default_values: vec![],
+                width: "16rem",
+                on_values_change: move |event: Vec<Skill>| {
+                    set_know.write().tag = event.clone();
+                },
+                SelectGroup { {items} }
+            }
+            p { color: set_know().state.color(), "{set_know().state.text()}" }
+
         }
 
-        // Select::<Option<Skill>> {
-        //     width: "14rem",
-        //     default_value: None,
-        //     on_value_change: move |event: Option<Option<Skill>>| {
-        //         set_know.write().tag = event.flatten().map(|v| vec![v]).unwrap_or_default();
-        //     },
-        //     SelectGroup { style: "width: 13.5rem", {sort_by} }
-        // }
-        p { color: set_know().state.color(), "{set_know().state.text()}" }
     }
 }

@@ -5,7 +5,6 @@
     -webkit-font-smoothing: none;
     -moz-osx-font-smoothing: grayscale;
     font-smooth: none;
-    image-rendering: pixelated;
 }
 
 
@@ -98,6 +97,7 @@ svg {
     overflow: hidden;
     z-index: 1000;
     user-select: none;
+    image-rendering: pixelated;
 }
 
 
@@ -253,4 +253,23 @@ svg {
 
 #filter_1>a {
     justify-self: flex-end;
+}
+
+#skill_zone {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+#skill_zone>div>label {
+    margin-bottom: 0.4rem;
+}
+
+#skill_zone>div {
+    margin-bottom: 0.8rem;
+}
+
+#skill_zone>.textarea {
+    margin-bottom: 0.8rem;
 }

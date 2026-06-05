@@ -41,3 +41,4 @@ pub use slider::*;
 pub use toast::*;
 pub use toggle::*;
 pub use tooltip::*;
+pub mod textarea;
